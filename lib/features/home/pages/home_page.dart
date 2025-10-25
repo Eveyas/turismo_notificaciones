@@ -26,6 +26,7 @@ class HomePage extends ConsumerWidget {
               await ref
                   .read(notificationServiceProvider)
                   .showLocal(
+                    context: context,
                     title: 'Novedad turística',
                     body: 'Nueva promo en Quintana Roo 🌴',
                     payload: '/promo',
@@ -41,13 +42,17 @@ class HomePage extends ConsumerWidget {
         itemBuilder: (_, i) {
           final d = destinos[i];
           return ListTile(
-            leading: const Icon(Icons.place),
-            title: Text(d['nombre']!),
+            leading: const Icon(Icons.place, color: Colors.teal),
+            title: Text(
+              d['nombre']!,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             subtitle: Text(d['tipo']!),
             onTap: () async {
               await ref
                   .read(notificationServiceProvider)
                   .showLocal(
+                    context: context,
                     title: 'Explora ${d['nombre']}',
                     body: 'Descubre ${d['nombre']} (${d['tipo']})',
                     payload: '/destino/${d['nombre']}',
@@ -60,4 +65,3 @@ class HomePage extends ConsumerWidget {
     );
   }
 }
-

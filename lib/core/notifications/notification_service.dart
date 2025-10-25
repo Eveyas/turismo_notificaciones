@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
@@ -5,6 +7,8 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
+    if (kIsWeb) return; // ⚡ En web no inicializa nada
+
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosInit = DarwinInitializationSettings();
     const settings = InitializationSettings(android: androidInit, iOS: iosInit);
@@ -26,10 +30,24 @@ class NotificationService {
   }
 
   Future<void> showLocal({
+    required BuildContext context,
     required String title,
     required String body,
     String? payload,
   }) async {
+    if (kIsWeb) {
+      // 💻 Simular notificación en Web
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$title: $body'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.teal,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
     const androidDetails = AndroidNotificationDetails(
       'default_channel',
       'General',

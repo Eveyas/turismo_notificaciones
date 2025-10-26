@@ -20,9 +20,9 @@ Se utilizan ambos tipos de notificaciones juntos, ya que, push puede activar una
 
 ### 3. ¿Cómo podrías aplicar esta lógica en una app real (p. ej. turística o educativa)?
 Para la app turística:
--Riverpod: gestionaría el estado global de lugares, reservas o  rutas favoritas de los usuarios
--Notificaciones locales: mandaría un aviso al usuario, sobre un punto turístico cercano
--Push notifications: sería la encargada de informar eventos o promocionies en tiempo real al usuario, todo esto enviada desde un servidor
+- Riverpod: gestionaría el estado global de lugares, reservas o  rutas favoritas de los usuarios
+- Notificaciones locales: mandaría un aviso al usuario, sobre un punto turístico cercano
+- Push notifications: sería la encargada de informar eventos o promocionies en tiempo real al usuario, todo esto enviada desde un servidor
 
 ## Pasos para correr el Proyecto
 En la terminal ingresar el comando

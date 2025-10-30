@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.turismo_notificaciones"
+    namespace = "com.example.turismoynotificaciones"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     defaultConfig {
-        applicationId = "com.example.turismo_notificaciones"
+        applicationId = "com.example.turismoynotificaciones"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -20,7 +20,7 @@ android {
     compileOptions {
         sourceCompatibility(JavaVersion.VERSION_11)
         targetCompatibility(JavaVersion.VERSION_11)
-        isCoreLibraryDesugaringEnabled = true // 👈 corregido
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {

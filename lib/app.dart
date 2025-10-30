@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'features/home/pages/home_page.dart';
+import 'features/pages/home_page.dart';
 
 class TurismoApp extends StatelessWidget {
   const TurismoApp({super.key});

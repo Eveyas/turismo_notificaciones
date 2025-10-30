@@ -1,48 +1,88 @@
+import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
+//Variables de las notificaciones del sistema
 class NotificationService {
-  final FlutterLocalNotificationsPlugin _local =
+  static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future<void> init() async {
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosInit = DarwinInitializationSettings();
-    const settings = InitializationSettings(android: androidInit, iOS: iosInit);
+  static Future<void> initialize() async {
+    //configuración para inicializar en android
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    await _local.initialize(settings);
+    //configuracion para Ios
+    const DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
-    const channel = AndroidNotificationChannel(
+    //Inicializa el sistema
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+        );
+
+    await _notificationsPlugin.initialize(initializationSettings);
+
+    // canal de notificaciones en android
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'default_channel',
       'General',
       description: 'Canal de notificaciones generales',
       importance: Importance.high,
     );
 
-    await _local
+    final androidImplementation = _notificationsPlugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(channel);
+        >();
+
+    await androidImplementation?.createNotificationChannel(channel);
+
+    //solicitud de permiso para android (para poder enviar notificaciones locales)
+    if (Platform.isAndroid) {
+      var status = await Permission.notification.status;
+      if (!status.isGranted) {
+        await Permission.notification.request();
+      }
+    }
   }
 
-  Future<void> showLocal({
+  //envia la notificacion local
+  static Future<void> showNotification({
     required String title,
     required String body,
     String? payload,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
-      'default_channel',
-      'General',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const iosDetails = DarwinNotificationDetails();
+    //definicion de estilos
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'default_channel',
+          'General',
+          channelDescription: 'Canal de notificaciones generales',
+          importance: Importance.high,
+          priority: Priority.high,
+          playSound: true,
+        );
 
-    await _local.show(
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
+
+    const NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    //muestra la notificación
+    await _notificationsPlugin.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000,
       title,
       body,
-      const NotificationDetails(android: androidDetails, iOS: iosDetails),
+      details,
       payload: payload,
     );
   }

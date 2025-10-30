@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../home/providers.dart';
-import 'package:turismo_notificaciones/core/notifications/notification_service.dart';
+import 'package:turismoynotificaciones/core/notifications/notification_service.dart';
 
 //interfaz principal
 class HomePage extends ConsumerWidget {

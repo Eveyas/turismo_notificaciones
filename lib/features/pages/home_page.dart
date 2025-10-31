@@ -1,13 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../home/providers.dart';
 import 'package:turismoynotificaciones/core/notifications/notification_service.dart';
 
-//interfaz principal
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
-  //Lista de destinos
+  @override
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  String? _fcmToken;
+
+  @override
+  void initState() {
+    super.initState();
+    _getFcmToken();
+    _subscribeToTopics();
+  }
+
+  Future<void> _getFcmToken() async {
+    final token = await FirebaseMessaging.instance.getToken();
+    setState(() {
+      _fcmToken = token;
+    });
+    print('FCM Token: $token');
+  }
+
+  Future<void> _subscribeToTopics() async {
+    await FirebaseMessaging.instance.subscribeToTopic('ofertas');
+    print('Suscripto al tópico: ofertas');
+  }
+
+  // Lista de destinos
   static const destinos = [
     {'nombre': 'Cancún', 'tipo': 'Playa'},
     {'nombre': 'Tulum', 'tipo': 'Zona arqueológica'},
@@ -16,7 +43,7 @@ class HomePage extends ConsumerWidget {
   ];
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final badge = ref.watch(badgeCountProvider);
 
     return Scaffold(
@@ -73,12 +100,12 @@ class HomePage extends ConsumerWidget {
                       size: 18,
                     ),
                     onTap: () async {
-                      //envia la notificacion local
+                      // Envía la notificación local
                       await NotificationService.showNotification(
                         title: 'Explora ${d['nombre']}',
                         body: 'Descubre ${d['nombre']} (${d['tipo']})',
                       );
-                      //incrementa el contador
+                      // Incrementa el contador
                       ref.read(badgeCountProvider.notifier).state++;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -101,6 +128,38 @@ class HomePage extends ConsumerWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                // Token FCM
+                if (_fcmToken != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Token FCM:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Text(
+                          _fcmToken!,
+                          style: const TextStyle(fontSize: 10),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                // Contador de notificaciones
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -132,11 +191,13 @@ class HomePage extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
+
+                // Botón para notificación local
                 ElevatedButton.icon(
                   icon: const Icon(Icons.notifications),
-                  label: const Text('Enviar notificación'),
+                  label: const Text('Enviar notificación local'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1976D2), // Azul medio
+                    backgroundColor: const Color(0xFF1976D2),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -152,13 +213,13 @@ class HomePage extends ConsumerWidget {
                     );
                     ref.read(badgeCountProvider.notifier).state++;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: const Color(0xFF0D47A1),
-                        content: const Text(
+                      const SnackBar(
+                        backgroundColor: Color(0xFF0D47A1),
+                        content: Text(
                           'Notificación enviada',
                           style: TextStyle(color: Colors.white),
                         ),
-                        duration: const Duration(seconds: 2),
+                        duration: Duration(seconds: 2),
                       ),
                     );
                   },
@@ -171,3 +232,4 @@ class HomePage extends ConsumerWidget {
     );
   }
 }
+

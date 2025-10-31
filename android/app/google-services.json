@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "127313457851",
+    "project_id": "turismoynotificaciones",
+    "storage_bucket": "turismoynotificaciones.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127313457851:android:932843e457b8e17db7af9e",
+        "android_client_info": {
+          "package_name": "com.example.turismoynotificaciones"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCxvSK0siLTaX_NVOdrmXFcDg6GhKv0uk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
